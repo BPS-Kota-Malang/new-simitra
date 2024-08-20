@@ -6,17 +6,33 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SurveyController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MitraController;
+use App\Http\Controllers\MitraTeladan;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\PenilaianController;
 use App\Http\Controllers\MitraTeladanController;
 
-Route::get('/', [LoginController::class, 'login'])->name('login');
-use App\Http\Controllers\MitraTeladan;
-Route::post('actionlogin', [LoginController::class, 'actionlogin'])->name('actionlogin');
+Route::get('/', function () {
+    return view('welcome');
+});
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+
+    // Route::get('/', [LoginController::class, 'login'])->name('login');
+    // use App\Http\Controllers\MitraTeladan;
+    // Route::post('actionlogin', [LoginController::class, 'actionlogin'])->name('actionlogin');
+
+// Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
 Route::get('/bantuan', [DashboardController::class, 'bantuan'])->name('bantuan')->middleware('auth');
-Route::post('actionlogout', [LoginController::class, 'actionlogout'])->name('actionlogout')->middleware('auth');
+// Route::post('actionlogout', [LoginController::class, 'actionlogout'])->name('actionlogout')->middleware('auth');
 
 Route::get('/survei', [SurveyController::class, 'index'])->name('survei')->middleware('auth');
 Route::get('/survei/add', [SurveyController::class, 'add'])->name('addsurvei')->middleware('auth');
@@ -45,4 +61,7 @@ Route::post('/pegawai/edit', [PegawaiController::class, 'store'])->name('editpeg
 Route::get('/pegawai/{id}', [PegawaiController::class, 'show'])->name('pegawaidetail')->middleware('auth');
 
 //Route::get('/mitrateladan', [MitraController::class, 'index'])->name('mitra')->middleware('auth');
-Route::get('/mitrateladan', [MitraTeladan::class, 'index'])->name('mitrateladan')->middleware('auth');
+Route::get('/mitrateladan', [MitraTeladanController::class, 'index'])->name('mitrateladan')->middleware('auth');
+
+
+require __DIR__.'/auth.php';
